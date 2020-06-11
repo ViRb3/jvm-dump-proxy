@@ -1,0 +1,29 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.API_GITHUB_TOKEN }}
+
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles"
+          cmake --build .
+
+      - name: Action For Semantic Release
+        uses: cycjimmy/semantic-release-action@v2.4.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
