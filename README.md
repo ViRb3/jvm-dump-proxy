@@ -7,13 +7,13 @@ Some Java programs use [reflection](https://www.oracle.com/technical-resources/a
 This project aims to be a universal solution to all your dumping needs. By hooking at the lowest reliably accessible JNI level, it will dump all classes as they are being loaded.
 
 ## Limitations
-- x64-only
+- x64 only
 - Only hooks `DefineClass*`. It is possible to bypass this method by implementing your own class loader [in JNI](https://stackoverflow.com/questions/3735233/encrypted-class-files-with-decryption-handled-by-a-native-library).
 
 ## Usage
-Download the release and extract `version.dll`. Place it in your Java `bin` directory, next to `java.exe`. You may want to use a separate Java installation so you don't affect all processes. On your desktop, create a new directory called `JVMDUMP`.
+Download the latest [release](https://github.com/ViRb3/jvm-dump-proxy/releases). Place `version.dll` in your Java `bin` directory, next to `java.exe`. You may want to use a separate Java installation so you don't affect all processes. On your desktop, create a new directory called `JVMDUMP`.
 
-When you run any program with the modified Java installation, you will see a message box with the hooking result. Once you press `Ok`, all loaded classes will be saved on your desktop under the directory on your desktop.
+When you run any program with the modified Java installation, you will see a message box with the hooking result. Once you press `OK`, all loaded classes will be saved under the directory on your desktop.
 
 ## FAQ
 - Q: I am getting `Error 2` \
@@ -23,7 +23,7 @@ A: They will be appended with a number, nothing will be overwritten
 
 ## Technical details
 ### proxy.h, library.def
-A simple proxy DLL implementation to inject into the JVM painlessly and reliably. For more information, check the [References](#References).
+A simple proxy DLL implementation to inject into the JVM painlessly and reliably. For more information, check the [references](#References).
 ### hook.cpp
 Installs the hooks that redirect methods to our code. Powered by [mhook](https://github.com/apriorit/mhook).
 ### dump.h
