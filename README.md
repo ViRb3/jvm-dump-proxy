@@ -36,5 +36,7 @@ A fast and simple Java class parser. It will parse the class name of each hooked
 - CMake 3.16+
 
 ## References
-- If you would like to learn more about the proxy DLL technique, check out the base project [PerfectProxyDLL](https://github.com/ViRb3/PerfectProxyDLL).
-- Control flow of [findClass](https://stackoverflow.com/questions/3544614/how-is-the-control-flow-to-findclass-of).
+- If you would like to learn more about the proxy DLL technique, check out the base project [PerfectProxyDLL](https://github.com/ViRb3/PerfectProxyDLL)
+- Control flow of [findClass](https://stackoverflow.com/questions/3544614/how-is-the-control-flow-to-findclass-of)
+- JDK [Classloader.c](https://github.com/corretto/corretto-8/blob/release-8.202.32.1/src/jdk/src/share/native/java/lang/ClassLoader.c)
+- JDK [jvm.cpp](https://github.com/corretto/corretto-8/blob/release-8.202.32.1/src/hotspot/src/share/vm/prims/jvm.cpp)
