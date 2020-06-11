@@ -2,7 +2,7 @@
 > A proxy DLL for Windows to dump JVM classes at JNI level.
 
 ## Introduction
-Some Java programs use [reflection](https://www.oracle.com/technical-resources/articles/java/javareflection.html) to hide their code by loading and executing classes dynamically. To tackle this, you could [dump them from memory](https://github.com/hengyunabc/dumpclass), or edit `rt.jar` and place a hook on various reflection methods. But sometimes authors will go a step further - they will unload classes after they have executed, preventing them from being dumped. And other times, crazy people will even use the native methods directly, bypassing any bytecode-level hooks.
+Some Java programs use [reflection](https://www.oracle.com/technical-resources/articles/java/javareflection.html) to hide their code by loading and executing classes dynamically. You can [dump them from memory](https://github.com/hengyunabc/dumpclass), but what if they are unloaded right after they execute? You could edit `rt.jar` and place a hook on various reflection methods. But what if the program uses the native class loading methods directly, bypassing any bytecode-level hooks?
 
 This project aims to be a universal solution to all your dumping needs. By hooking at the lowest reliably accessible JNI level, it will dump all classes as they are being loaded.
 
