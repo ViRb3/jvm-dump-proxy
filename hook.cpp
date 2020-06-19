@@ -6,18 +6,17 @@
 
 using namespace std;
 
-typedef jclass JNICALL (*JVM_DefineClass)(JNIEnv *env, const char *name, jobject loader,
-                                          const jbyte *buf, jsize len, jobject pd);
+typedef jclass JNICALL (*sig_JVM_DefineClass)(JNIEnv *env, const char *name, jobject loader,
+                                              const jbyte *buf, jsize len, jobject pd);
+typedef jclass JNICALL(*sig_JVM_DefineClassWithSource)(JNIEnv *env, const char *name, jobject loader, const jbyte *buf,
+                                                       jsize len, jobject pd, const char *source);
+typedef jclass JNICALL (*sig_JVM_DefineClassWithSourceCond)(JNIEnv *env, const char *name,
+                                                            jobject loader, const jbyte *buf, jsize len, jobject pd,
+                                                            const char *source, jboolean verify);
 
-typedef jclass JNICALL(*JVM_DefineClassWithSource)(JNIEnv *env, const char *name, jobject loader, const jbyte *buf,
-                                                   jsize len, jobject pd, const char *source);
-
-typedef jclass JNICALL (*JVM_DefineClassWithSourceCond)(JNIEnv *env, const char *name, jobject loader, const jbyte *buf,
-                                                        jsize len, jobject pd, const char *source, jboolean verify);
-
-JVM_DefineClass orig_JVM_DefineClass = NULL;
-JVM_DefineClassWithSource orig_JVM_DefineClassWithSource = NULL;
-JVM_DefineClassWithSourceCond orig_JVM_DefineClassWithSourceCond = NULL;
+sig_JVM_DefineClass orig_JVM_DefineClass = NULL;
+sig_JVM_DefineClassWithSource orig_JVM_DefineClassWithSource = NULL;
+sig_JVM_DefineClassWithSourceCond orig_JVM_DefineClassWithSourceCond = NULL;
 
 jclass JNICALL detour_JVM_DefineClass(JNIEnv *env, const char *name, jobject loader,
                                       const jbyte *buf, jsize len, jobject pd) {
@@ -37,21 +36,21 @@ jclass JNICALL detour_JVM_DefineClassWithSourceCond(JNIEnv *env, const char *nam
     return orig_JVM_DefineClassWithSourceCond(env, name, loader, buf, len, pd, source, verify);
 }
 
-BOOL DoHook() {
+bool doHook() {
     HMODULE hJvm = LoadLibrary("jvm.dll");
     if (!hJvm) {
         return FALSE;
     }
-    orig_JVM_DefineClass = (JVM_DefineClass) GetProcAddress(hJvm, "JVM_DefineClass");
+    orig_JVM_DefineClass = (sig_JVM_DefineClass) GetProcAddress(hJvm, "JVM_DefineClass");
     if (!orig_JVM_DefineClass) {
         return FALSE;
     }
-    orig_JVM_DefineClassWithSource = (JVM_DefineClassWithSource) GetProcAddress(hJvm, "JVM_DefineClassWithSource");
+    orig_JVM_DefineClassWithSource = (sig_JVM_DefineClassWithSource) GetProcAddress(hJvm, "JVM_DefineClassWithSource");
     if (!orig_JVM_DefineClassWithSource) {
         return FALSE;
     }
-    orig_JVM_DefineClassWithSourceCond = (JVM_DefineClassWithSourceCond) GetProcAddress(hJvm,
-                                                                                        "JVM_DefineClassWithSourceCond");
+    orig_JVM_DefineClassWithSourceCond = (sig_JVM_DefineClassWithSourceCond) GetProcAddress(hJvm,
+                                                                                            "JVM_DefineClassWithSourceCond");
     if (!orig_JVM_DefineClassWithSourceCond) {
         return FALSE;
     }
@@ -62,10 +61,10 @@ BOOL DoHook() {
     return Mhook_SetHookEx(hooks, 3) == 3;
 }
 
-BOOL WINAPI DllMain(HMODULE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+bool WINAPI DllMain(HMODULE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
     if (fdwReason == DLL_PROCESS_ATTACH) {
         SourceInit();
-        if (DoHook()) {
+        if (doHook()) {
             MessageBox(NULL, "Hooks initialized.", "Success", MB_OK);
         } else {
             MessageBox(NULL, "Something went wrong.", "Error", MB_OK);
